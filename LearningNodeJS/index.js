@@ -2,8 +2,16 @@
 
 let app = require('express')();
 
-app.post('/', (req, res) => {
-    console.log("POST request received")
+app.post('/doOneThing', (req, res) => {
+    console.log('POST request received')
+    console.log('Doing One Thing')
+    console.log(req)
+    res.sendStatus(200)
+});
+
+app.post('/doSomeOtherThing', (req, res) => {
+    console.log('POST request received')
+    console.log('Doing Some Other Thing')
     res.sendStatus(200)
 });
 
