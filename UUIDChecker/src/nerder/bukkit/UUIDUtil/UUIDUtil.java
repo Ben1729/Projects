@@ -5,7 +5,9 @@
  * @author Nerder
  *
  */
+
 package nerder.bukkit.UUIDUtil;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,15 +18,12 @@ import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.*;
 import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.*;
+
 
 public class UUIDUtil extends JavaPlugin implements Listener {
 	
@@ -48,7 +47,7 @@ public class UUIDUtil extends JavaPlugin implements Listener {
 		getConfig().addDefault("UnbanFormat", ChatColor.DARK_RED + "!" + ChatColor.GOLD + "'s UUID Has Been Unbanned");
 		getConfig().addDefault("UnbanWReasonFormat", ChatColor.DARK_RED +  "!" + ChatColor.GOLD + "'s UUID Has Been Unbanned For reason " + ChatColor.GREEN + "@");
 		getConfig().addDefault("BanReasonFormat",ChatColor.GOLD+"!" + ChatColor.WHITE+"'s UUID Is Curently Banned For: "+ ChatColor.GREEN + "@");
-		getConfig().addDefault("PastBanReasonFormat",ChatColor.DARK_RED+ "!" + ChatColor.GOLD+"'s UUID Used To Be Banned For: "+ ChatColor.GREEN+ "@" + ChatColor.GOLD+"But They Where Unbanned");
+		getConfig().addDefault("PastBanReasonFormat",ChatColor.DARK_RED+ "!" + ChatColor.GOLD+"'s UUID Used To Be Banned For: "+ ChatColor.GREEN+ "@" + ChatColor.GOLD+"But They Were Unbanned");
 		getConfig().addDefault("UnbanReasonFormat",ChatColor.DARK_RED+"!"+ChatColor.GOLD+"'s UUID Was Unbanned For: "+ ChatColor.GREEN+"@");
 		getConfig().addDefault("NotBannedFormat",ChatColor.DARK_RED+"!"+ChatColor.GOLD+"'s UUID Has Never Been Banned");
 	    getConfig().options().copyDefaults(true);
