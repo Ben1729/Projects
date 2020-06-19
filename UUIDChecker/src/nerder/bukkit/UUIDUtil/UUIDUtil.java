@@ -325,7 +325,7 @@ public class UUIDUtil extends JavaPlugin implements Listener {
 			else if (!isBanned) {
 				if(getConfig().isSet("Banned_UUIDs." + uuid + ".Reason")) {
 					String reason = getBanReason(args);
-					System.out.println(args[1]+" Used To Be Banned For: \""+reason+"\"But They Where Unbanned");
+					System.out.println(args[1]+" Used To Be Banned For: \""+reason+"\"But They Were Unbanned");
 				}
 				if(getConfig().isSet("Banned_UUIDs." + uuid + ".UnbanReason")) {
 					String unbanReason = getUnbanReason(args);
