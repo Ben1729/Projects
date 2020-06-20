@@ -1,4 +1,4 @@
-import ephem, re, time, math
+import ephem, time
 
 #Servo steps per degree
 STEPS_PER_DEGREE = 27.30555
