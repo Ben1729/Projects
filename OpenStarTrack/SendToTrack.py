@@ -1,4 +1,7 @@
-import ephem, time
+import ephem, serial, time
+ 
+#Com port use to connect to arduino
+COM_PORT = 'COM1'
 
 #Servo steps per degree
 STEPS_PER_DEGREE = 27.30555
@@ -33,6 +36,8 @@ def dms2dd(dms):
     return dd;
 
 if __name__ == "__main__":
+    arduino = serial.Serial('COM1', 9600, timeout=.1)
+    time.sleep(1)
 
     site = ephem.Observer()
     site.lat = LATITUDE
@@ -43,14 +48,16 @@ if __name__ == "__main__":
     
     az = float(dms2dd(target.az))
     alt = float(dms2dd(target.alt))
-    if az > 180:
+    while True:
+        if az > 180:
 
-        azimuth = ((az - 180)*STEPS_PER_DEGREE)+MIN_DUTY
-        elevation = ((180-alt)*STEPS_PER_DEGREE)+MIN_DUTY
+            azimuth = ((az - 180)*STEPS_PER_DEGREE)+MIN_DUTY
+            elevation = ((180-alt)*STEPS_PER_DEGREE)+MIN_DUTY
 
-        #TODO Send to arduino Via com port
-    else:
-        azimuth = ((az)*STEPS_PER_DEGREE)+MIN_DUTY
-        elevation = ((alt)*STEPS_PER_DEGREE)+MIN_DUTY
+            #TODO Send to arduino Via com port
 
-        #TODO Send to arduino Via com port
+        else:
+            azimuth = ((az)*STEPS_PER_DEGREE)+MIN_DUTY
+            elevation = ((alt)*STEPS_PER_DEGREE)+MIN_DUTY
+
+            #TODO Send to arduino Via com port
