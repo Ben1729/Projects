@@ -14,8 +14,7 @@ def bf(src, left, right, data, idx):
     if left >= len(src): left = len(src) - 1
     if right < 0: right = 0
     if right >= len(src): right = len(src) - 1
-    # tuning machine has infinite array size
-    # increase or decrease here accordingly
+    
     arr = [0] * 30000
     ptr = 0
     i = left
