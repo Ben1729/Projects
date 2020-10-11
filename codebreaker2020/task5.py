@@ -24,4 +24,3 @@ for lat in range(5,90):
                         out.write(str(plaintext))
                         exit()
                         '{:2}'.format(lat)
-                

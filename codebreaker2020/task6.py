@@ -1,37 +1,45 @@
 import numpy as np
-import scipy as sp
-
-from collections import deque
-from scipy import signal
-
+import struct
 import matplotlib.pyplot as plt
 
-import warnings
-warnings.filterwarnings('ignore')
+bits = []
+i = 0
+lastVal = np.float16()
+CHANGE = .2
 
-SAMPLE_RATE = 10e6
+vallarr = []
 
-TIME_0 = 1.0 / 29.0
-TIME_1 = 2.0 / 29.0
+with open('out.ham', 'ab') as out:
+    with open('signal.ham', 'rb') as file:
 
-OFFSET_0 = int(SAMPLE_RATE * TIME_0)
-OFFSET_1 = int(SAMPLE_RATE * (TIME_0 + TIME_1))
+        for _ in range(10000):
+            try:
+                vallarr.append(np.frombuffer(file.read(2), dtype=np.float16)[0])
+            except:
+                break
+        print('1')
+        for _ in range(10000):
+            try:
+                thisVal = np.frombuffer(file.read(2), dtype=np.float16)[0]
 
-FILE_PATH = "signal.ham"
+                if lastVal - thisVal > CHANGE:
+                    bits.append(1)
+                elif lastVal - thisVal < 0 - CHANGE:
+                    bits.append(0)
 
-sample_capture = sp.fromfile(FILE_PATH, dtype=np.complex64)
-sample_capture = sample_capture[OFFSET_0:OFFSET_1]
+                i += 1
+                if i == 8:
+                    i = 0
+            except:
+                pass
 
-freq, power = signal.welch(sample_capture,
-                           fs=SAMPLE_RATE,
-                           window='hann',
-                           nfft=2048,
-                           return_onesided=False,
-                           detrend=None)
+    plt.plot(vallarr, bits)
+    plt.ylabel('Value')
+    plt.xlabel('Sample')
+    plt.show()
 
-plt.plot(freq / 1e6, 10 * np.log10(power))
-plt.xlabel('Frequency [MHz]')
-plt.ylabel('Power Spectral Density [dB]')
-plt.grid(which='both', linestyle='--')
-plt.title('FM Modulated NTSC - Periodogram')
-plt.show()
+    # multiple line plot
+plt.plot( 'x', 'y1', data=df, marker='o', markerfacecolor='blue', markersize=12, color='skyblue', linewidth=4)
+plt.plot( 'x', 'y2', data=df, marker='', color='olive', linewidth=2)
+plt.plot( 'x', 'y3', data=df, marker='', color='olive', linewidth=2, linestyle='dashed', label="toto")
+plt.legend()
