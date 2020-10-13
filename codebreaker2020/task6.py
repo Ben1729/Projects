@@ -1,45 +1,67 @@
 import numpy as np
-import struct
+import struct, math
 import matplotlib.pyplot as plt
+
+
+SMOOTHING = 10
 
 bits = []
 i = 0
-lastVal = np.float16()
-CHANGE = .2
+lastVal = 0
 
 vallarr = []
+changeArr = []
+lastBit = 0
 
-with open('out.ham', 'ab') as out:
-    with open('signal.ham', 'rb') as file:
+smoothingStack = [0]*SMOOTHING
 
-        for _ in range(10000):
-            try:
-                vallarr.append(np.frombuffer(file.read(2), dtype=np.float16)[0])
-            except:
-                break
-        print('1')
-        for _ in range(10000):
-            try:
-                thisVal = np.frombuffer(file.read(2), dtype=np.float16)[0]
+def Average(lst): 
+    return sum(lst) / len(lst)
 
-                if lastVal - thisVal > CHANGE:
-                    bits.append(1)
-                elif lastVal - thisVal < 0 - CHANGE:
-                    bits.append(0)
+with open('signal.ham', 'rb') as file:
 
-                i += 1
-                if i == 8:
-                    i = 0
-            except:
-                pass
+    for _ in range(1000000):
+        try:
+            #import floats from file
+            val = np.frombuffer(file.read(2), dtype=np.float16)[0]
 
-    plt.plot(vallarr, bits)
-    plt.ylabel('Value')
-    plt.xlabel('Sample')
-    plt.show()
+            #calculate change since last sample
+            change = (val - lastVal)
+            lastVal = val
 
-    # multiple line plot
-plt.plot( 'x', 'y1', data=df, marker='o', markerfacecolor='blue', markersize=12, color='skyblue', linewidth=4)
-plt.plot( 'x', 'y2', data=df, marker='', color='olive', linewidth=2)
-plt.plot( 'x', 'y3', data=df, marker='', color='olive', linewidth=2, linestyle='dashed', label="toto")
-plt.legend()
+            #append value and change to arrays
+            vallarr.append(val)
+            changeArr.append(change)
+
+        except:
+            pass
+
+    for i in range(len(vallarr)):
+        try:
+
+            #if change is positive and greater than .5, bit must be a 1
+            average = Average(smoothingStack)
+
+            if vallarr[i] - average > 0:
+                bits.append(1)
+                lastBit = 1
+
+            #if change is negitive and less than -.5, bit must be a 0
+            elif vallarr[i] < 0:
+                bits.append(-1)
+                lastBit = -1
+
+            #otherwise use last bit
+            else:
+                bits.append(lastBit)
+
+            smoothingStack.append(math.ceil(vallarr[i], 10))
+            smoothingStack.popleft()
+
+        except:
+            pass
+
+plt.plot(vallarr, color='blue', linewidth=1)
+#plt.plot(changeArr, color='orange', linewidth=1)
+plt.plot(bits, color='red', linewidth=1)
+plt.show()
