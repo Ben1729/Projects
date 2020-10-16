@@ -2,7 +2,6 @@ import numpy as np
 import struct, math
 import matplotlib.pyplot as plt
 
-
 SMOOTHING = 10
 
 bits = ''
@@ -73,7 +72,7 @@ with open('signal.ham', 'rb') as file:
         if len(bits) == 7:
             bitsArray.append(bits)
             bits = ''
-    
+
     with open('decodedOutput2.h264', 'ab') as file:
         byteBuilder = ''
         for vector in bitsArray:
