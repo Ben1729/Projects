@@ -2,26 +2,15 @@ import numpy as np
 import struct, math
 import matplotlib.pyplot as plt
 
-
-SMOOTHING = 10
-
-bits = ''
-bitsArray = []
-lastVal = 0
-
-vallarr = []
-
-smoothingStack = [0]*SMOOTHING
-
 #hamming check matrix
-H = np.array(  [[1, 0, 1, 0, 1, 0, 1],
-                [0, 1, 1, 0, 0, 1, 1],
-                [0, 0, 0, 1, 1, 1, 1]])
+H = np.array(  [[0, 1, 1, 1, 1, 0, 0],
+                [1, 0, 1, 1, 0, 1, 0],
+                [1, 1, 0, 1, 0, 0, 1]])
 
-R = np.array(  [[0, 0, 1, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, 0, 0],
-                [0, 0, 0, 0, 0, 1, 0],
-                [0, 0, 0, 0, 0, 0, 1]])
+R = np.array(  [[1, 0, 0, 0, 0, 0, 0],
+                [0, 1, 0, 0, 0, 0, 0],
+                [0, 0, 1, 0, 0, 0, 0],
+                [0, 0, 0, 1, 0, 0, 0]])
 
 #returns the +1 index of any error in the vector, else returns zero if no error
 def getError(b):
@@ -48,6 +37,11 @@ def hammingDecode(b):
     p = np.matmul(R, r)
     return ''.join([str(x) for x in [p[0][0] % 2, p[1][0] % 2, p[2][0] % 2, p[3][0] % 2]])
 
+
+bits = ''
+bitsArray = []
+vallarr = []
+
 with open('signal.ham', 'rb') as file:
 
     #file.read(145250)
@@ -70,16 +64,20 @@ with open('signal.ham', 'rb') as file:
         elif vallarr[i] < 0:
             bits += '0'
 
-        if len(bits) == 7:
+        if len(bits) == 72:
             bitsArray.append(bits)
+            #print(bits)
+            #input()
             bits = ''
     
     with open('decodedOutput2.h264', 'ab') as file:
         byteBuilder = ''
         for vector in bitsArray:
+            vector = vector[::-1]
             error = getError(vector)
             if error != 0:
                 errorbit = vector[error-1]
+                print(error)
                 if errorbit == '1': 
                     byteBuilder += hammingDecode(vector[:error - 1] + '0' + vector[error:])
                 else: 
