@@ -69,7 +69,7 @@ with open('signal.ham', 'rb') as file:
             #print(bits)
             #input()
             bits = ''
-    
+
     with open('decodedOutput2.h264', 'ab') as file:
         byteBuilder = ''
         for vector in bitsArray:
