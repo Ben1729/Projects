@@ -3,39 +3,43 @@ import struct, math
 import matplotlib.pyplot as plt
 
 #hamming check matrix
-H = np.array(  [[0, 1, 1, 1, 1, 0, 0],
-                [1, 0, 1, 1, 0, 1, 0],
-                [1, 1, 0, 1, 0, 0, 1]])
+H = np.array(  [[1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+                [1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+                [0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0]])
+                
+R = np.array(  [[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]])
 
-R = np.array(  [[1, 0, 0, 0, 0, 0, 0],
-                [0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 1, 0, 0, 0, 0],
-                [0, 0, 0, 1, 0, 0, 0]])
+#returns the int array for a binary string
+def toArray(string):
+    list = []
+    for x in string:
+        list.append([int(x)])
+    return list
 
 #returns the +1 index of any error in the vector, else returns zero if no error
 def getError(b):
-    r =np.array([[int(b[0])],
-        [int(b[1])],
-        [int(b[2])],
-        [int(b[3])],
-        [int(b[4])],
-        [int(b[5])],
-        [int(b[6])]])
-    s = np.matmul(H, r)
-    return int(''.join([str(x) for x in [s[0][0] % 2, s[1][0] % 2, s[2][0] % 2]]), 2)
+    r = np.array(toArray(b))
+
+    s = np.matmul(H[:17][:11], r)
+    return int(''.join([str(x) for x in [y[0] % 2 for y in s]]), 2)
 
 #returns the decoded bits from the corrected 7 bit vector
 def hammingDecode(b):
-    r = np.array([[int(b[0])],
-        [int(b[1])],
-        [int(b[2])],
-        [int(b[3])],
-        [int(b[4])],
-        [int(b[5])],
-        [int(b[6])]])
+    r = np.array(toArray(b))
 
-    p = np.matmul(R, r)
-    return ''.join([str(x) for x in [p[0][0] % 2, p[1][0] % 2, p[2][0] % 2, p[3][0] % 2]])
+    p = np.matmul(R[:17][:11], r)
+    return ''.join([str(x) for x in [y[0] % 2 for y in p]])
 
 
 bits = ''
@@ -45,7 +49,7 @@ vallarr = []
 with open('signal.ham', 'rb') as file:
 
     #file.read(145250)
-    while True:
+    for x in range(2000):
         try:
             #import floats from file
             val = np.frombuffer(file.read(2), dtype=np.float16)[0]
@@ -64,7 +68,7 @@ with open('signal.ham', 'rb') as file:
         elif vallarr[i] < 0:
             bits += '0'
 
-        if len(bits) == 72:
+        if len(bits) == 17:
             bitsArray.append(bits)
             #print(bits)
             #input()
@@ -76,14 +80,15 @@ with open('signal.ham', 'rb') as file:
             vector = vector[::-1]
             error = getError(vector)
             if error != 0:
-                errorbit = vector[error-1]
-                print(error)
-                if errorbit == '1': 
-                    byteBuilder += hammingDecode(vector[:error - 1] + '0' + vector[error:])
-                else: 
-                    byteBuilder += hammingDecode(vector[:error - 1] + '1' + vector[error:])
+                
+                byteBuilder += hammingDecode(vector)
+                #if vector[error-1] == '1': 
+                #    byteBuilder += hammingDecode(vector[:error - 1] + '0' + vector[error:])
+                #else: 
+                #    byteBuilder += hammingDecode(vector[:error - 1] + '1' + vector[error:])
             else:
                 byteBuilder += hammingDecode(vector)
-            if len(byteBuilder) == 8:
-                file.write(int(byteBuilder, 2).to_bytes(1, 'big'))
-                byteBuilder = ''
+            if len(byteBuilder) >= 16:
+                s = byteBuilder[:16]
+                byteBuilder = byteBuilder[16:]
+                file.write(int(s, 2).to_bytes(2, 'little'))
