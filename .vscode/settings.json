@@ -1,4 +1,10 @@
 {
     "C_Cpp.intelliSenseEngine": "Tag Parser",
-    "python.pythonPath": "C:\\Users\\huckb\\anaconda3\\python.exe"
+    "python.pythonPath": "C:\\Users\\huckb\\anaconda3\\envs\\py3\\python.exe",
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
+    }
 }
